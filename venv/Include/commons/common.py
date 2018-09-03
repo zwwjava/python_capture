@@ -45,7 +45,23 @@ class Common(object):
             f_csv.writerows(data)
         print('write_csv success')
 
-    def sqlExecute(self, sql):
+    def queryData(self, sql):
+        db = pymysql.connect("localhost", "zww", "960128", "zwwdb")
+        cursor = db.cursor()
+        results = []
+        try:
+            cursor.execute(sql)    #执行查询语句
+            results = cursor.fetchall()
+        except Exception as e:
+            print('查询时发生异常' + e)
+            # 如果发生错误则回滚
+            db.rollback()
+        # 关闭数据库连接
+        db.close()
+        return results
+        print('insert data success')
+
+    def insertData(self, sql):
         # 打开数据库连接
         db = pymysql.connect("localhost", "zww", "960128", "zwwdb")
         # 使用 cursor() 方法创建一个游标对象 cursor
@@ -54,7 +70,6 @@ class Common(object):
         try:
             # sql = "INSERT INTO WEATHER(w_id, w_date, w_detail, w_temperature) VALUES (null, '%s','%s','%s')" % (data[0], data[1], data[2])
             cursor.execute(sql)    #单条数据写入
-
             # 提交到数据库执行
             db.commit()
         except Exception as e:
