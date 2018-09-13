@@ -12,17 +12,17 @@ import csv
 class Common(object):
     def getUrlContent(self, url, data=None):
         header = {
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, sdch',
-            'Accept-Language': 'zh-CN,zh;q=0.8',
-            'Connection': 'keep-alive',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.235'
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8',
+            'user-agent': "User-Agent:Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36",
+            'cache-control': 'max-age=0'
         }  # request 的请求头
         timeout = random.choice(range(80, 180))
         while True:
             try:
                 rep = requests.get(url, headers=header, timeout=timeout)  # 请求url地址，获得返回 response 信息
-                rep.encoding = 'utf-8'
+                # rep.encoding = 'utf-8'
                 break
             except socket.timeout as e:  # 以下都是异常处理
                 print('3:', e)
@@ -46,7 +46,7 @@ class Common(object):
         print('write_csv success')
 
     def queryData(self, sql):
-        db = pymysql.connect("localhost", "zww", "960128", "zwwdb")
+        db = pymysql.connect("localhost", "zww", "960128", "test")
         cursor = db.cursor()
         results = []
         try:
@@ -82,7 +82,7 @@ class Common(object):
 
     def patchInsertData(self, sql, datas):
         # 打开数据库连接
-        db = pymysql.connect("localhost", "zww", "960128", "zwwdb")
+        db = pymysql.connect("localhost", "zww", "960128", "test")
         # 使用 cursor() 方法创建一个游标对象 cursor
         cursor = db.cursor()
 
