@@ -11,9 +11,14 @@ from wordcloud import WordCloud, ImageColorGenerator
 import os
 import numpy as np
 import PIL.Image as Image
+from Include.wechat.chatUseData import DataUtil
+import time
+import schedule
+import threading
+import _thread
 
+dataUtil = DataUtil()
 class WeChat():
-
     KEY = '71f9d9d2dd364ad8b28bd56527470176'
 
     def login(self):
@@ -21,7 +26,7 @@ class WeChat():
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
-    @itchat.msg_register(itchat.content.TEXT)
+    # @itchat.msg_register(itchat.content.TEXT)
     def tuling_robot(self, msg):
         # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
         defaultReply = '不想说话了！'
@@ -56,6 +61,16 @@ class WeChat():
     def getFriends(self):
         friends = itchat.get_friends(update=True)[0:]
         return friends
+
+    def getRoom(self, name):
+        rooms = itchat.search_chatrooms(name=name)  # 获取微信群列表，如果设置update=True将从服务器刷新列表
+        if rooms:
+            userName = rooms[0]['UserName']
+            return userName
+
+    def getRooms(self):
+        rooms = itchat.get_chatrooms(update=True)
+        return rooms
 
     def ratio(self, friends):
         # 初始化计数器，有男有女，当然，有些人是不填的
@@ -103,20 +118,49 @@ class WeChat():
         plt.show()
         my_wordcloud.to_file(os.path.join(d, "wechat_cloud.png"))
 
-        # 这里要选择字体存放路径，这里是Mac的，win的字体在windows／Fonts中
-        # my_wordcloud = WordCloud(background_color="white", max_words=2000,
-        #                          max_font_size=40, random_state=42,
-        #                          font_path='C:/Windows/Fonts/STFANGSO.ttf').generate(wl_space_split)
-        # plt.imshow(my_wordcloud)
-        # plt.axis("off")
-        # plt.show()
 
     def sendMessage(self, message, name):
         itchat.send(message, toUserName=name)
 
-if __name__ == "__main__":
-    wechat = WeChat()
-    wechat.login()
+    def dailyInfo(self):
+        print('dailyInfo do')
+        hangz = dataUtil.getWeatherData('杭州')
+        # item = wechat.getFriend('阿勇')
+        # wechat.sendMessage(hangz, item)
+        group1 = wechat.getRoom('阿里A3研发部')
+        wechat.sendMessage(hangz, group1)
+        group2 = wechat.getRoom('幸福一家人')
+        wechat.sendMessage(hangz, group2)
+        # if group1:
+        #     wechat.sendMessage(hangz, group1)
+
+
+def viewer( threadName):
+   print(threadName)
+
+def job1_task(wechat):
+    threading.Thread(target=wechat.login()).start()
+
+wechat = WeChat()
+_thread.start_new_thread(wechat.login, ( ))
+schedule.every().day.at("8:00").do(wechat.dailyInfo)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
+
+# if __name__ == "__main__":
+#     wechat = WeChat()
+#     print('test1')
+#     _thread.start_new_thread(wechat.login())
+#     print('test1')
+#     schedule.every(10).day.at("17:01").do(job2_task(wechat))
+#     print('test1')
+#     while True:
+#         schedule.run_pending()
+#         time.sleep(1)
+    # threading.Thread(target=wechat.login()).start()
+
+
     # item = wechat.getFriend('阿勇')
     # wechat.sendMessage("我是zww的python微信助手", item)
     # friends = wechat.getFriends()
