@@ -2,6 +2,7 @@
 # Author: zww
 
 import itchat
+import requests
 import re
 # jieba分词
 import jieba
@@ -26,15 +27,17 @@ class WeChat():
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
-    # @itchat.msg_register(itchat.content.TEXT)
-    def tuling_robot(self, msg):
+    # @itchat.msg_register(['Text', 'Picture', 'Sharing', 'Video', 'Card'])
+    def text_reply(self, msg):
         # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-        defaultReply = '不想说话了！'
+        # defaultReply = '不想说话了！\n来自旺旺的语音助理'
+        defaultReply = '不想说话了！' + "*"
         # 如果图灵Key出现问题，那么reply将会是None
-        reply = self.getget_response(msg['Text'])
+        reply = get_response(msg['Text']) + "*"
         # a or b的意思是，如果a有内容，那么返回a，否则返回b
         # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
         return reply or defaultReply
+
 
     def get_response(self, msg):
         # 构造了要发送给服务器的数据
@@ -125,28 +128,60 @@ class WeChat():
     def dailyInfo(self):
         print('dailyInfo do')
         hangz = dataUtil.getWeatherData('杭州')
-        # item = wechat.getFriend('阿勇')
-        # wechat.sendMessage(hangz, item)
+        nanchang = dataUtil.getWeatherData('南昌')
+        item = wechat.getFriend('喵喵女孩')
+        wechat.sendMessage(nanchang, item)
         group1 = wechat.getRoom('阿里A3研发部')
         wechat.sendMessage(hangz, group1)
         group2 = wechat.getRoom('幸福一家人')
         wechat.sendMessage(hangz, group2)
-        # if group1:
-        #     wechat.sendMessage(hangz, group1)
 
-
-def viewer( threadName):
-   print(threadName)
+# 回复信息
+# @itchat.msg_register(['Text', 'Picture', 'Sharing', 'Video', 'Card'])
+def text_reply(msg):
+    # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
+    # defaultReply = '不想说话了！\n来自旺旺的语音助理'
+    defaultReply = '不想说话了！' + "*"
+    # 如果图灵Key出现问题，那么reply将会是None
+    reply = get_response(msg['Text']) + "*"
+    # a or b的意思是，如果a有内容，那么返回a，否则返回b
+    # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
+    return reply or defaultReply
+KEY = '71f9d9d2dd364ad8b28bd56527470176'
+def get_response(msg):
+    # 构造了要发送给服务器的数据
+    apiUrl = 'http://www.tuling123.com/openapi/api'
+    data = {
+        'key': KEY,
+        'info': msg,
+        'userid': 'wechat-robot',
+    }
+    try:
+        r = requests.post(apiUrl, data=data).json()
+        return r.get('text')
+    # 为了防止服务器没有正常响应导致程序异常退出，这里用try-except捕获了异常
+    # 如果服务器没能正常交互（返回非json或无法连接），那么就会进入下面的return
+    except Exception as e:
+        print('插入时发生异常' + e)
+        # 将会返回一个None
+        return
 
 def job1_task(wechat):
     threading.Thread(target=wechat.login()).start()
 
-wechat = WeChat()
-_thread.start_new_thread(wechat.login, ( ))
-schedule.every().day.at("8:00").do(wechat.dailyInfo)
-while True:
-    schedule.run_pending()
-    time.sleep(1)
+# wechat = WeChat()
+# _thread.start_new_thread(wechat.login, ( ))
+# schedule.every().day.at("8:00").do(wechat.dailyInfo)
+# while True:
+#     schedule.run_pending()
+#     time.sleep(1)
+
+# if __name__ == "__main__":
+#     wechat = WeChat()
+#     itchat.auto_login()
+#     friends = wechat.getFriends()
+#     wechat.signature(friends)
+#     wechat.ratio(friends)
 
 # if __name__ == "__main__":
 #     wechat = WeChat()

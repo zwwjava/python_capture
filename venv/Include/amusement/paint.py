@@ -5,9 +5,9 @@ from PIL import Image
 #要索引的字符列表
 ascii_char = list("$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ")
 length = len(ascii_char)
-img = Image.open('06-0.png')      #读取图像文件
+img = Image.open('timg.jpg')      #读取图像文件
 (width,height) = img.size
-img = img.resize((int(width*1),int(height*1)))  #对图像进行一定缩小
+img = img.resize((int(width*1),int(height*0.7)))  #对图像进行一定缩小
 print(img.size)
 def convert(img):
     img = img.convert("L")  # 转为灰度图像
@@ -32,6 +32,6 @@ def convert1(img):
     return txt
 
 txt = convert(img)
-f = open("04_convert.txt","w")
+f = open("04_timg.txt","w")
 f.write(txt)            #存储到文件中
 f.close()
