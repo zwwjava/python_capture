@@ -24,6 +24,7 @@ class WeChat():
 
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
+        # itchat.auto_login()
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
@@ -125,16 +126,35 @@ class WeChat():
     def sendMessage(self, message, name):
         itchat.send(message, toUserName=name)
 
+    def readStory(self):
+        print('readStory do')
+        stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+        wechat.sendMessage(stroy, 'filehelper')
+        # xia = wechat.getFriend('虾米')
+        # wechat.sendMessage(stroy, xia)
+        # miao = wechat.getFriend('喵喵女孩')
+        # wechat.sendMessage(stroy, miao)
+
+    def dailyInfo1(self):
+        print('dailyInfo1 do')
+        nanchang = dataUtil.getWeatherData('南昌')
+        xia = wechat.getFriend('虾米')
+        wechat.sendMessage(nanchang, xia)
+
     def dailyInfo(self):
         print('dailyInfo do')
         hangz = dataUtil.getWeatherData('杭州')
         nanchang = dataUtil.getWeatherData('南昌')
-        item = wechat.getFriend('喵喵女孩')
-        wechat.sendMessage(nanchang, item)
-        group1 = wechat.getRoom('阿里A3研发部')
-        wechat.sendMessage(hangz, group1)
+        # sahngrao = dataUtil.getWeatherData('上饶')
+        miao = wechat.getFriend('喵喵女孩')
+        wechat.sendMessage(nanchang, miao)
+        # xiaobai = wechat.getFriend('小白')
+        # wechat.sendMessage(sahngrao, xiaobai)
         group2 = wechat.getRoom('幸福一家人')
         wechat.sendMessage(hangz, group2)
+        # group1 = wechat.getRoom('阿里A3研发部')
+        # wechat.sendMessage(hangz, group1)
+
 
 # 回复信息
 # @itchat.msg_register(['Text', 'Picture', 'Sharing', 'Video', 'Card'])
@@ -172,16 +192,20 @@ def job1_task(wechat):
 # wechat = WeChat()
 # _thread.start_new_thread(wechat.login, ( ))
 # schedule.every().day.at("8:00").do(wechat.dailyInfo)
+# schedule.every().day.at("7:40").do(wechat.dailyInfo1)
+# schedule.every().day.at("11:50").do(wechat.readStory)
 # while True:
 #     schedule.run_pending()
 #     time.sleep(1)
 
-# if __name__ == "__main__":
-#     wechat = WeChat()
-#     itchat.auto_login()
-#     friends = wechat.getFriends()
-#     wechat.signature(friends)
-#     wechat.ratio(friends)
+if __name__ == "__main__":
+    wechat = WeChat()
+    wechat.login();
+    group = wechat.getRooms()
+    print("")
+    # friends = wechat.getFriends()
+    # wechat.signature(friends)
+    # wechat.ratio(friends)
 
 # if __name__ == "__main__":
 #     wechat = WeChat()
