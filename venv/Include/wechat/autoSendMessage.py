@@ -21,23 +21,32 @@ import _thread
 dataUtil = DataUtil()
 class WeChat():
     KEY = '71f9d9d2dd364ad8b28bd56527470176'
-
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
+        # itchat.send_image('./bing.jpg', 'filehelper')
         # itchat.auto_login()
+        # rooms = wechat.getRooms()
+        # group3 = wechat.getRoom('(￣(●●)￣)')
+        # print('')
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
-    # @itchat.msg_register(['Text', 'Picture', 'Sharing', 'Video', 'Card'])
+    # @itchat.msg_register(['Text', 'Picture'])
     def text_reply(self, msg):
-        # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-        # defaultReply = '不想说话了！\n来自旺旺的语音助理'
-        defaultReply = '不想说话了！' + "*"
-        # 如果图灵Key出现问题，那么reply将会是None
-        reply = get_response(msg['Text']) + "*"
-        # a or b的意思是，如果a有内容，那么返回a，否则返回b
-        # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-        return reply or defaultReply
+        msgText = msg['Text']
+        if msgText == "开启":
+            OPEN_FLAG = 1
+        if msgText == "关闭":
+            OPEN_FLAG = 0
+        if OPEN_FLAG == 1:
+            # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
+            # defaultReply = '不想说话了！\n来自旺旺的语音助理'
+            defaultReply = '不想说话了！' + "*"
+            # 如果图灵Key出现问题，那么reply将会是None
+            reply = get_response(msg['Text']) + "*"
+            # a or b的意思是，如果a有内容，那么返回a，否则返回b
+            # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
+            return reply or defaultReply
 
 
     def get_response(self, msg):
@@ -129,45 +138,48 @@ class WeChat():
     def readStory(self):
         print('readStory do')
         stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-        wechat.sendMessage(stroy, 'filehelper')
-        # xia = wechat.getFriend('虾米')
-        # wechat.sendMessage(stroy, xia)
-        # miao = wechat.getFriend('喵喵女孩')
-        # wechat.sendMessage(stroy, miao)
-
-    def dailyInfo1(self):
-        print('dailyInfo1 do')
-        nanchang = dataUtil.getWeatherData('南昌')
-        xia = wechat.getFriend('虾米')
-        wechat.sendMessage(nanchang, xia)
+        dataUtil.getBingPhoto('0')
+        # wechat.sendMessage(stroy, 'filehelper')
+        # itchat.send_image('./bing.jpg',  'filehelper')
+        miao = wechat.getFriend('喵喵姑娘')
+        wechat.sendMessage(stroy, miao)
+        itchat.send_image('./bing.jpg', toUserName=miao)
+        # group2 = wechat.getRoom('(￣(●●)￣)')
+        # wechat.sendMessage(stroy, group2)
 
     def dailyInfo(self):
         print('dailyInfo do')
         hangz = dataUtil.getWeatherData('杭州')
         nanchang = dataUtil.getWeatherData('南昌')
-        # sahngrao = dataUtil.getWeatherData('上饶')
-        miao = wechat.getFriend('喵喵女孩')
+        miao = wechat.getFriend('喵喵姑娘')
         wechat.sendMessage(nanchang, miao)
-        # xiaobai = wechat.getFriend('小白')
-        # wechat.sendMessage(sahngrao, xiaobai)
-        group2 = wechat.getRoom('幸福一家人')
-        wechat.sendMessage(hangz, group2)
+        # group2 = wechat.getRoom('幸福一家人')
+        # wechat.sendMessage(hangz, group2)
+        pigs = wechat.getRoom('(￣(●●)￣)')
+        wechat.sendMessage(hangz, pigs)
         # group1 = wechat.getRoom('阿里A3研发部')
         # wechat.sendMessage(hangz, group1)
 
-
-# 回复信息
-# @itchat.msg_register(['Text', 'Picture', 'Sharing', 'Video', 'Card'])
-def text_reply(msg):
-    # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-    # defaultReply = '不想说话了！\n来自旺旺的语音助理'
-    defaultReply = '不想说话了！' + "*"
-    # 如果图灵Key出现问题，那么reply将会是None
-    reply = get_response(msg['Text']) + "*"
-    # a or b的意思是，如果a有内容，那么返回a，否则返回b
-    # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-    return reply or defaultReply
 KEY = '71f9d9d2dd364ad8b28bd56527470176'
+OPEN_FLAG = 0
+# 回复信息
+# @itchat.msg_register(['Text', 'Picture'])
+def text_reply(msg):
+    global OPEN_FLAG
+    msgText = msg['Text']
+    if msgText == "开启":
+        OPEN_FLAG = 1
+        return
+    if msgText == "关闭":
+        OPEN_FLAG = 0
+    if OPEN_FLAG == 1:
+        # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
+        defaultReply = '不想说话了！' + "*"
+        # 如果图灵Key出现问题，那么reply将会是None
+        reply = get_response(msg['Text']) + "*"
+        # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
+        return reply or defaultReply
+
 def get_response(msg):
     # 构造了要发送给服务器的数据
     apiUrl = 'http://www.tuling123.com/openapi/api'
@@ -189,23 +201,22 @@ def get_response(msg):
 def job1_task(wechat):
     threading.Thread(target=wechat.login()).start()
 
-# wechat = WeChat()
-# _thread.start_new_thread(wechat.login, ( ))
+wechat = WeChat()
+_thread.start_new_thread(wechat.login, ( ))
 # schedule.every().day.at("8:00").do(wechat.dailyInfo)
-# schedule.every().day.at("7:40").do(wechat.dailyInfo1)
-# schedule.every().day.at("11:50").do(wechat.readStory)
-# while True:
-#     schedule.run_pending()
-#     time.sleep(1)
+schedule.every().day.at("22:00").do(wechat.readStory)
+while True:
+    schedule.run_pending()
+    time.sleep(1)
 
-if __name__ == "__main__":
-    wechat = WeChat()
-    wechat.login();
-    group = wechat.getRooms()
-    print("")
-    # friends = wechat.getFriends()
-    # wechat.signature(friends)
-    # wechat.ratio(friends)
+# if __name__ == "__main__":
+#     wechat = WeChat()
+#     wechat.login();
+#     group = wechat.getRooms()
+#     print("")
+#     friends = wechat.getFriends()
+#     wechat.signature(friends)
+#     wechat.ratio(friends)
 
 # if __name__ == "__main__":
 #     wechat = WeChat()

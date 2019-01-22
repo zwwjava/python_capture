@@ -2,13 +2,6 @@
 # author zww
 
 from Include.commons.common import Common
-import jieba
-# wordcloud词云
-import matplotlib.pyplot as plt
-from wordcloud import WordCloud, ImageColorGenerator
-import os
-import numpy as np
-import PIL.Image as Image
 
 common = Common()
 def showSize():
@@ -51,21 +44,15 @@ def showComment():
     text = ""
     for result in results:
         text = text + result[0]
-    wordlist_jieba = jieba.cut(text, cut_all=True)
-    wl_space_split = " ".join(wordlist_jieba)
 
-    d = os.path.dirname(__file__)
-    alice_coloring = np.array(Image.open(os.path.join(d, "wechat1.png")))
-    my_wordcloud = WordCloud(background_color="white", max_words=2000, mask=alice_coloring,
-                             max_font_size=50, random_state=42, width=1000, height=860,
-                             font_path='C:/Windows/Fonts/STFANGSO.ttf').generate(wl_space_split)
+    common.wordCloudShow(text, "..\\tmall\\wechat1.png", "..\\tmall\\wechat_cloud1.png", "white", 50, 1000, 860)
 
-    image_colors = ImageColorGenerator(alice_coloring)
-    plt.imshow(my_wordcloud.recolor(color_func=image_colors))
-    plt.imshow(my_wordcloud)
-    plt.axis("off")
-    plt.show()
-    my_wordcloud.to_file(os.path.join(d, "wechat_cloud1.png"))
+def fixData():
+    results = common.queryData("""select bra_id, comment from bra where `comment` not like '此用户没有填写评论%' and sentiment = 0 """)  # 获取评论
+    for result in results:
+        sen = common.showSentiments(result[1])
+        "UPDATE EMPLOYEE SET AGE = AGE + 1 WHERE SEX = '%c'" % ('M')
+        common.insertData("update bra set sentiment = '%f' where bra_id = '%s' " % (sen, result[0]))
 
 if __name__ == '__main__':
     showComment()

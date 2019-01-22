@@ -3,10 +3,15 @@
 from Include.commons.common import Common
 import json
 import datetime
+import urllib.request
+import PIL
+from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
 
 common = Common()
 key = 'cc186c9881b94b42b886a6d634c63002'
-readBookStartDay = datetime.datetime(2018, 9, 29)
+readBookStartDay = datetime.datetime(2018, 11, 3)
 class DataUtil():
 
     def getWeatherData(self, cityname):
@@ -58,7 +63,37 @@ class DataUtil():
         print(textInfo)
         return textInfo
 
+    def getBingPhoto(self, index):
+        url = ' http://www.bing.com/HPImageArchive.aspx?format=js&idx=' + index + '&n=1&nc=1469612460690&pid=hp&video=1'
+        html = urllib.request.urlopen(url).read().decode('utf-8')
+
+        photoData = json.loads(html)
+        photoUrl = 'https://cn.bing.com' + photoData['images'][0]['url']
+        photoReason = photoData['images'][0]['copyright']
+        photoReason = photoReason.split(' ')[0]
+        photo = urllib.request.urlopen(photoUrl).read()
+
+        with open('./bing.jpg', 'wb') as f:
+            # img = open_url(photoUrl)
+            if photo:
+                f.write(photo)
+        print("图片已保存")
+        # 设置所使用的字体
+        font = ImageFont.truetype("simhei.ttf",35)
+
+        # 打开图片
+        imageFile = "./bing.jpg"
+        im1 = Image.open(imageFile)
+
+        # 画图
+        draw = ImageDraw.Draw(im1)
+        draw.text((im1.size[0]/2.5, im1.size[1]-50), photoReason, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
+        draw = ImageDraw.Draw(im1)  # Just draw it!
+
+        # 另存图片
+        im1.save("./bing.jpg")
+
 if __name__ == '__main__':
     dataUtil = DataUtil()
-    # dataUtil.getWeatherData('南昌')
-    str = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    dataUtil.getBingPhoto('-1')
+    # str = dataUtil.getBookInfo('./从你的全世界路过.txt')

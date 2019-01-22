@@ -62,7 +62,7 @@ def getData(html_text, name, solo, double, squad):
 if __name__ == '__main__':
     common = Common()
     hostUrl = 'https://dak.gg/profile/'
-    endUrl = '/2018-08/as'
+    endUrl = '/2018-09/as'
     nameList = {'HRHLXL520', 'zhufuhengniubi', 'LittleNice_', 'Z_W_W_Z_S'}
     solo = []
     double = []

@@ -26,7 +26,7 @@ if __name__ == '__main__':
     while True:
         randdomWidth = random.randint(200, screenWidth - 200)
         randomHeight = random.randint(200, screenHeight - 200)
-        randomSleep = random.randint(50, 200)
+        randomSleep = random.randint(5, 10)
         randomDuration = random.randint(3, 10)
         print(str(randdomWidth) + ' ;' + str(randomHeight) + ' ;' + str(randomSleep))
         pag.moveTo(randdomWidth, randomHeight, randomDuration/10)
