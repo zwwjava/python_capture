@@ -23,11 +23,6 @@ class WeChat():
     KEY = '71f9d9d2dd364ad8b28bd56527470176'
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
-        # itchat.send_image('./bing.jpg', 'filehelper')
-        # itchat.auto_login()
-        # rooms = wechat.getRooms()
-        # group3 = wechat.getRoom('(￣(●●)￣)')
-        # print('')
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
@@ -138,25 +133,23 @@ class WeChat():
     def readStory(self):
         print('readStory do')
         stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-        dataUtil.getBingPhoto('0')
-        # wechat.sendMessage(stroy, 'filehelper')
-        # itchat.send_image('./bing.jpg',  'filehelper')
-        miao = wechat.getFriend('喵喵姑娘')
-        wechat.sendMessage(stroy, miao)
-        itchat.send_image('./bing.jpg', toUserName=miao)
+        dataUtil.getBingPhoto('2')
+        wechat.sendMessage(stroy, 'filehelper')
+        itchat.send_image('./bing.jpg',  'filehelper')
+        # yfei = wechat.getFriend('燚菲。')
+        # wechat.sendMessage(stroy, yfei)
+        # itchat.send_image('./bing.jpg', toUserName=yfei)
         # group2 = wechat.getRoom('(￣(●●)￣)')
         # wechat.sendMessage(stroy, group2)
 
     def dailyInfo(self):
         print('dailyInfo do')
         hangz = dataUtil.getWeatherData('杭州')
-        nanchang = dataUtil.getWeatherData('南昌')
-        miao = wechat.getFriend('喵喵姑娘')
-        wechat.sendMessage(nanchang, miao)
+        wechat.sendMessage(hangz, 'filehelper')
+        # yfei = wechat.getFriend('燚菲。')
+        # wechat.sendMessage(hangz, yfei)
         # group2 = wechat.getRoom('幸福一家人')
         # wechat.sendMessage(hangz, group2)
-        pigs = wechat.getRoom('(￣(●●)￣)')
-        wechat.sendMessage(hangz, pigs)
         # group1 = wechat.getRoom('阿里A3研发部')
         # wechat.sendMessage(hangz, group1)
 
@@ -202,8 +195,11 @@ def job1_task(wechat):
     threading.Thread(target=wechat.login()).start()
 
 wechat = WeChat()
+# 开启多线程
 _thread.start_new_thread(wechat.login, ( ))
-# schedule.every().day.at("8:00").do(wechat.dailyInfo)
+# 开启早间天气预报
+schedule.every().day.at("7:30").do(wechat.dailyInfo)
+# 开启睡前故事
 schedule.every().day.at("22:00").do(wechat.readStory)
 while True:
     schedule.run_pending()

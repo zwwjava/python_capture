@@ -11,17 +11,19 @@ from PIL import ImageFont
 
 common = Common()
 key = 'cc186c9881b94b42b886a6d634c63002'
-readBookStartDay = datetime.datetime(2018, 11, 3)
+key_jh = '777d35900bffe58af88f56069b12785c'
+readBookStartDay = datetime.datetime(2019, 2, 14)
 class DataUtil():
 
     def getWeatherData(self, cityname):
         url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + cityname
-        results = common.getUrlContent(url)
-        text = self.parseInfo(results)
+        url_jh = 'http://v.juhe.cn/weather/index?key=' + key_jh + '&cityname=' + cityname
+        results = common.get(url_jh)
+        text = self.parseInfo_jh(results)
         print(text)
         return text
 
-    def parseInfo(self, jsons):
+    def parseInfo_afd(self, jsons):
         # 将string 转换为字典对象
         jsonData = json.loads(jsons)
         textInfo = '又是元气满满的一天哟.\n'
@@ -41,6 +43,27 @@ class DataUtil():
         textInfo = textInfo + '穿衣指数：' + jsonData['result']['life']['info']['chuanyi'][0] + ' - ' + jsonData['result']['life']['info']['chuanyi'][1] + '\n\n'
         textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1]  + '\n\n'
         textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]
+        print(textInfo)
+        return textInfo
+
+    def parseInfo_jh(self, jsons):
+        # 将string 转换为字典对象
+        jsonData = json.loads(jsons)
+        textInfo = '又是元气满满的一天哟.\n'
+        data = jsonData['result']['today']['date_y']
+        week = jsonData['result']['today']['week']
+        city_name = jsonData['result']['today']['city']
+        temperature = jsonData['result']['today']['temperature']
+        weather = jsonData['result']['today']['weather']
+        wind = jsonData['result']['today']['wind']
+
+        textInfo = textInfo + '今天是' + data + ',' + week + '\n\n'
+        textInfo = textInfo + city_name + '气温：' + temperature + ' ' + weather + ' ' + wind + '\n\n'
+        textInfo = textInfo + '穿衣指数：' + jsonData['result']['today']['dressing_advice'] + '\n\n'
+        textInfo = textInfo + '运动指数：' + jsonData['result']['today']['exercise_index'] + '\n\n'
+        textInfo = textInfo + '旅游指数：' + jsonData['result']['today']['travel_index'] + '\n\n'
+        textInfo = textInfo + '紫外线指数：' + jsonData['result']['today']['uv_index'] + '\n\n'
+        print(textInfo)
         return textInfo
 
     def getBookInfo(self, filePath):
@@ -95,5 +118,13 @@ class DataUtil():
 
 if __name__ == '__main__':
     dataUtil = DataUtil()
-    dataUtil.getBingPhoto('-1')
+    # dataUtil.getWeatherData('杭州')
+    dataUtil.getBingPhoto('2')
     # str = dataUtil.getBookInfo('./从你的全世界路过.txt')
+
+    # with open('./2018.12.25.1.txt',encoding='utf-8',mode =  'w') as f:
+    #     for line in open('./2018.12.25.txt', encoding='utf-8'):
+    #         newLine = "20190122" + line[8:len(line)]
+    #         f.writelines(newLine)
+
+
