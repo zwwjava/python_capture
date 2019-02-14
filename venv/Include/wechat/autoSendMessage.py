@@ -134,20 +134,20 @@ class WeChat():
         print('readStory do')
         stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
         dataUtil.getBingPhoto('2')
-        wechat.sendMessage(stroy, 'filehelper')
-        itchat.send_image('./bing.jpg',  'filehelper')
-        # yfei = wechat.getFriend('燚菲。')
-        # wechat.sendMessage(stroy, yfei)
-        # itchat.send_image('./bing.jpg', toUserName=yfei)
+        # wechat.sendMessage(stroy, 'filehelper')
+        # itchat.send_image('./bing.jpg',  'filehelper')
+        yfei = wechat.getFriend('燚菲。')
+        wechat.sendMessage(stroy, yfei)
+        itchat.send_image('./bing.jpg', toUserName=yfei)
         # group2 = wechat.getRoom('(￣(●●)￣)')
         # wechat.sendMessage(stroy, group2)
 
     def dailyInfo(self):
         print('dailyInfo do')
-        hangz = dataUtil.getWeatherData('杭州')
-        wechat.sendMessage(hangz, 'filehelper')
-        # yfei = wechat.getFriend('燚菲。')
-        # wechat.sendMessage(hangz, yfei)
+        jiujiang = dataUtil.getWeatherData('九江')
+        # wechat.sendMessage(jiujiang, 'filehelper')
+        yfei = wechat.getFriend('燚菲。')
+        wechat.sendMessage(jiujiang, yfei)
         # group2 = wechat.getRoom('幸福一家人')
         # wechat.sendMessage(hangz, group2)
         # group1 = wechat.getRoom('阿里A3研发部')
@@ -156,15 +156,17 @@ class WeChat():
 KEY = '71f9d9d2dd364ad8b28bd56527470176'
 OPEN_FLAG = 0
 # 回复信息
-# @itchat.msg_register(['Text', 'Picture'])
+@itchat.msg_register(['Text'])
 def text_reply(msg):
     global OPEN_FLAG
     msgText = msg['Text']
+    print(msgText)
     if msgText == "开启":
         OPEN_FLAG = 1
-        return
+        return '开启皮皮语音助手*'
     if msgText == "关闭":
         OPEN_FLAG = 0
+        return '关闭皮皮语音助手*'
     if OPEN_FLAG == 1:
         # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
         defaultReply = '不想说话了！' + "*"
