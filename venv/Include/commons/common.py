@@ -15,6 +15,13 @@ import os
 import numpy as np
 import PIL.Image as Image
 from snownlp import SnowNLP
+from aip import AipSpeech
+
+
+# 百度AI 账号信息
+APP_ID = '15569705'
+API_KEY = 'U1DZPCSmO2YwtyHy7egVw1Q8'
+SECRET_KEY = 'eSGmrcldRtzYSo8O9FQkjTKAn0nvytf3 '
 
 # 封装requests
 class Common(object):
@@ -154,3 +161,19 @@ class Common(object):
         temp = SnowNLP(txt)
         print(temp.sentiments)
         return temp.sentiments
+
+    # txt 为list
+    def txtToMp3(self, txts):
+        print('开始进行文件转MP3')
+        client = AipSpeech(APP_ID, API_KEY, SECRET_KEY)
+        with open('Passing through your world.mp3', 'wb') as f:
+            for txt in txts:
+                print('正在进行文件转MP3...')
+                result = client.synthesis(txt, 'zh', 1, {'pit': 3,'spd': 4,'vol': 5, 'per': 3})
+                # 识别正确返回语音二进制 错误则返回dict 参照下面错误码
+                if not isinstance(result, dict):
+                    f.write(result)
+
+if __name__ == '__main__':
+    common = Common()
+    common.txtToMp3(["night.3。。初恋是一个人的兵荒马乱。。night.3。。初恋是一个人的兵荒马乱。。night.3。。初恋是一个人的兵荒马乱。。"])

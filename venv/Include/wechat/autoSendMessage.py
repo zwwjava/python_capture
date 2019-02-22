@@ -23,6 +23,7 @@ class WeChat():
     KEY = '71f9d9d2dd364ad8b28bd56527470176'
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
+        # print(itchat.send_file('./Passing through your world.mp3', 'filehelper'))
         itchat.run()  # 让itchat一直运行
 
     # 回复信息
@@ -133,11 +134,15 @@ class WeChat():
     def readStory(self):
         print('readStory do')
         stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-        dataUtil.getBingPhoto('2')
+        dataUtil.getBingPhoto('0')
         # wechat.sendMessage(stroy, 'filehelper')
         # itchat.send_image('./bing.jpg',  'filehelper')
         yfei = wechat.getFriend('燚菲。')
-        wechat.sendMessage(stroy, yfei)
+
+        for txt in stroy:
+            wechat.sendMessage(txt, yfei)
+
+        # itchat.send_file('./Passing through your world.mp3', toUserName=yfei)
         itchat.send_image('./bing.jpg', toUserName=yfei)
         # group2 = wechat.getRoom('(￣(●●)￣)')
         # wechat.sendMessage(stroy, group2)
@@ -153,27 +158,49 @@ class WeChat():
         # group1 = wechat.getRoom('阿里A3研发部')
         # wechat.sendMessage(hangz, group1)
 
+# 历史信息
+msg_information = {}
 KEY = '71f9d9d2dd364ad8b28bd56527470176'
 OPEN_FLAG = 0
 # 回复信息
-@itchat.msg_register(['Text'])
+# @itchat.msg_register(['Text','NOTE'])
 def text_reply(msg):
-    global OPEN_FLAG
-    msgText = msg['Text']
-    print(msgText)
-    if msgText == "开启":
-        OPEN_FLAG = 1
-        return '开启皮皮语音助手*'
-    if msgText == "关闭":
-        OPEN_FLAG = 0
-        return '关闭皮皮语音助手*'
-    if OPEN_FLAG == 1:
-        # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-        defaultReply = '不想说话了！' + "*"
-        # 如果图灵Key出现问题，那么reply将会是None
-        reply = get_response(msg['Text']) + "*"
-        # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-        return reply or defaultReply
+    userName = msg['FromUserName']
+    print(msg)
+    msg_id = msg['MsgId']   #每条信息的id
+    if len(msg_information) >= 10:
+        keys = list(msg_information.keys())
+        msg_information.pop(keys[0])
+    msg_information[msg_id] = msg['Text']
+    print(msg_information)
+    # global OPEN_FLAG
+    # msgText = msg['Text']
+    # print(msgText)
+    # if msgText == "皮皮过来":
+    #     OPEN_FLAG = 1
+    #     return '开启皮皮语音助手*'
+    # if msgText == "皮皮退下":
+    #     OPEN_FLAG = 0
+    #     return '关闭皮皮语音助手*'
+    # if OPEN_FLAG == 1:
+    #     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
+    #     defaultReply = '不想说话了！' + "*"
+    #     # 如果图灵Key出现问题，那么reply将会是None
+    #     reply = get_response(msg['Text']) + "*"
+    #     # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
+    #     return reply or defaultReply
+
+
+##这个是用于监听是否有消息撤回
+# @itchat.msg_register(['NOTE'])
+def information(msg):
+    print('撤回信息：' + msg)
+    if '撤回了一条消息' in msg['Content']:
+        old_msg_id = re.search("\<msgid\>(.*?)\<\/msgid\>", msg['Content']).group(1)  # 在返回的content查找撤回的消息的id
+        old_msg = msg_information.get(old_msg_id)  # 得到消息
+        msg_body = '小可爱撤回了一条信息：' + old_msg
+        wechat.sendMessage(msg_body, 'filehelper')
+
 
 def get_response(msg):
     # 构造了要发送给服务器的数据
@@ -200,7 +227,7 @@ wechat = WeChat()
 # 开启多线程
 _thread.start_new_thread(wechat.login, ( ))
 # 开启早间天气预报
-schedule.every().day.at("7:30").do(wechat.dailyInfo)
+schedule.every().day.at("7:20").do(wechat.dailyInfo)
 # 开启睡前故事
 schedule.every().day.at("22:00").do(wechat.readStory)
 while True:

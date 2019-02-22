@@ -2,6 +2,7 @@
 # author zww
 
 from Include.commons.common import Common
+from pyecharts import Bar
 
 common = Common()
 def showSize():
@@ -39,6 +40,21 @@ def showColor():
     pieColor.render('color.html')
     print('success')
 
+def showSentiment():
+    results = common.queryData("""select count(*), sentiment from bra where `comment` not like '此用户没有填写评论%' and sentiment != 0 GROUP BY sentiment""")  #
+    attr = []
+    v1 = []
+    for result in results:
+        sentiment = str(result[1])
+        attr.append(sentiment)
+        v1.append(result[0])
+
+
+    bar = Bar("坐标轴标签旋转示例")
+    bar.add("", attr, v1, xaxis_interval=5, xaxis_rotate=0, yaxis_rotate=0)
+    bar.render()
+
+
 def showComment():
     results = common.queryData("""select comment from bra where `comment` not like '此用户没有填写评论%' LIMIT 1000 """)  # 获取评论
     text = ""
@@ -55,7 +71,8 @@ def fixData():
         common.insertData("update bra set sentiment = '%f' where bra_id = '%s' " % (sen, result[0]))
 
 if __name__ == '__main__':
-    showComment()
+    showSentiment()
+
 
 
 

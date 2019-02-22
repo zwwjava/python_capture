@@ -12,21 +12,21 @@ from PIL import ImageFont
 common = Common()
 key = 'cc186c9881b94b42b886a6d634c63002'
 key_jh = '777d35900bffe58af88f56069b12785c'
-readBookStartDay = datetime.datetime(2019, 2, 14)
+readBookStartDay = datetime.datetime(2019, 2, 15)
 class DataUtil():
 
     def getWeatherData(self, cityname):
         url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + cityname
         url_jh = 'http://v.juhe.cn/weather/index?key=' + key_jh + '&cityname=' + cityname
-        results = common.get(url_jh)
-        text = self.parseInfo_jh(results)
+        results = common.get(url)
+        text = self.parseInfo_afd(results)
         print(text)
         return text
 
     def parseInfo_afd(self, jsons):
         # 将string 转换为字典对象
         jsonData = json.loads(jsons)
-        textInfo = '又是元气满满的一天哟.\n'
+        textInfo = '早上好，今天又是元气满满的一天哟.\n'
         data = jsonData['result']['weather'][0]['date']
         week = jsonData['result']['weather'][0]['week']
         nongli = jsonData['result']['weather'][0]['nongli']
@@ -36,14 +36,14 @@ class DataUtil():
         weather = jsonData['result']['weather'][0]['info']['day'][1]
         wind = jsonData['result']['weather'][0]['info']['day'][4]
 
-        textInfo = textInfo + '今天是' + data + '\n'
+        textInfo = textInfo + '今天是' + data + '号\n'
         textInfo = textInfo + '农历:' + nongli + ',星期' + week + '\n'
-        textInfo = textInfo + city_name + '气温：' + lowTemperature + '-' + highTemperature + '度，' + weather + ' ' + wind + '\n'
-        textInfo = textInfo + '紫外线指数：' + jsonData['result']['life']['info']['ziwaixian'][0] + ' - ' + jsonData['result']['life']['info']['ziwaixian'][1] + '\n\n'
+        textInfo = textInfo + city_name + '气温：' + lowTemperature + '-' + highTemperature + '度，' + weather + ' ' + wind + '\n\n'
         textInfo = textInfo + '穿衣指数：' + jsonData['result']['life']['info']['chuanyi'][0] + ' - ' + jsonData['result']['life']['info']['chuanyi'][1] + '\n\n'
-        textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1]  + '\n\n'
-        textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]
-        print(textInfo)
+        textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1] + '\n\n'
+        textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]  + '\n\n'
+        textInfo = textInfo + '紫外线指数：' + jsonData['result']['life']['info']['ziwaixian'][0] + ' - ' + jsonData['result']['life']['info']['ziwaixian'][1]  + '\n\n'
+        textInfo = textInfo + 'by：小可爱专属秘书' + '\n\n'
         return textInfo
 
     def parseInfo_jh(self, jsons):
@@ -63,16 +63,21 @@ class DataUtil():
         textInfo = textInfo + '运动指数：' + jsonData['result']['today']['exercise_index'] + '\n\n'
         textInfo = textInfo + '旅游指数：' + jsonData['result']['today']['travel_index'] + '\n\n'
         textInfo = textInfo + '紫外线指数：' + jsonData['result']['today']['uv_index'] + '\n\n'
-        print(textInfo)
+        textInfo = textInfo + 'by：小可爱专属秘书' + '\n'
         return textInfo
 
     def getBookInfo(self, filePath):
+        radioList = []
+        row = 0
         textInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
+        tempInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
         file = open(filePath)
         readFlag = False
         today = datetime.datetime.now()
         dayCount = (today - readBookStartDay).days + 1
         for line in open(filePath):
+
+
             # if (line == '\n'):
             #     continue
             if (line.find('night.' + str(dayCount)) > -1):
@@ -81,10 +86,20 @@ class DataUtil():
             if (line.find('night.' + str(dayCount+1)) > -1):
                 break
             if readFlag:
+                row += 1
                 textInfo += line
+                tempInfo += line
+
+                if row == 25:
+                    radioList.append(tempInfo)
+                    tempInfo = ''
+                    row = 0
         textInfo += '\n晚安'
-        print(textInfo)
-        return textInfo
+        tempInfo += '\n晚安'
+        radioList.append(tempInfo)
+        # common.txtToMp3(radioList)
+        # print(textInfo)
+        return radioList
 
     def getBingPhoto(self, index):
         url = ' http://www.bing.com/HPImageArchive.aspx?format=js&idx=' + index + '&n=1&nc=1469612460690&pid=hp&video=1'
@@ -115,12 +130,28 @@ class DataUtil():
 
         # 另存图片
         im1.save("./bing.jpg")
-
+msg_information = {}
 if __name__ == '__main__':
     dataUtil = DataUtil()
-    # dataUtil.getWeatherData('杭州')
-    dataUtil.getBingPhoto('2')
-    # str = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    dataUtil.getWeatherData('九江')
+    # # dataUtil.getBingPhoto('2')
+    # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    # for txt in stroy:
+    #     print(txt)
+    # msg_information['001'] = '001'
+    # msg_information['002'] = '002'
+    # msg_information['003'] = '003'
+    # msg_information['004'] = '004'
+    # msg_information['005'] = '005'
+    # msg_information['006'] = '006'
+    # print(len(msg_information))
+    # # msg_information.popitem()
+    # keys = list(msg_information.keys())
+    # msg_information.pop(keys[0])
+    # print(msg_information)
+    # msg_information['001'] = '001'
+    # print(msg_information)
+
 
     # with open('./2018.12.25.1.txt',encoding='utf-8',mode =  'w') as f:
     #     for line in open('./2018.12.25.txt', encoding='utf-8'):
