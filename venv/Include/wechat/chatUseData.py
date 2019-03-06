@@ -9,20 +9,25 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
-common = Common()
+common = Common() #这是个我自己封装的工具类
 key = 'cc186c9881b94b42b886a6d634c63002'
 key_jh = '777d35900bffe58af88f56069b12785c'
-readBookStartDay = datetime.datetime(2019, 2, 15)
+# 提取故事的第一天
+readBookStartDay = datetime.datetime(2019, 2, 17)
 class DataUtil():
 
+    # 获取天气信息
     def getWeatherData(self, cityname):
+        # 阿凡达数据
         url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + cityname
+        # 聚合数据
         url_jh = 'http://v.juhe.cn/weather/index?key=' + key_jh + '&cityname=' + cityname
         results = common.get(url)
         text = self.parseInfo_afd(results)
         print(text)
         return text
 
+    # 简单的数据封装
     def parseInfo_afd(self, jsons):
         # 将string 转换为字典对象
         jsonData = json.loads(jsons)
@@ -43,7 +48,7 @@ class DataUtil():
         textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1] + '\n\n'
         textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]  + '\n\n'
         textInfo = textInfo + '紫外线指数：' + jsonData['result']['life']['info']['ziwaixian'][0] + ' - ' + jsonData['result']['life']['info']['ziwaixian'][1]  + '\n\n'
-        textInfo = textInfo + 'by：小可爱专属秘书' + '\n\n'
+        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n\n'
         return textInfo
 
     def parseInfo_jh(self, jsons):
@@ -63,79 +68,73 @@ class DataUtil():
         textInfo = textInfo + '运动指数：' + jsonData['result']['today']['exercise_index'] + '\n\n'
         textInfo = textInfo + '旅游指数：' + jsonData['result']['today']['travel_index'] + '\n\n'
         textInfo = textInfo + '紫外线指数：' + jsonData['result']['today']['uv_index'] + '\n\n'
-        textInfo = textInfo + 'by：小可爱专属秘书' + '\n'
+        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n'
         return textInfo
 
     def getBookInfo(self, filePath):
-        radioList = []
+        radioList = [] #微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
         row = 0
-        textInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
-        tempInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
-        file = open(filePath)
-        readFlag = False
+        tempInfo = textInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
+        readFlag = False #是否读取
         today = datetime.datetime.now()
         dayCount = (today - readBookStartDay).days + 1
         for line in open(filePath):
-
-
-            # if (line == '\n'):
-            #     continue
-            if (line.find('night.' + str(dayCount)) > -1):
+            if (line.find('night.' + str(dayCount)) > -1): # 开始读数据
                 readFlag = True
                 continue
-            if (line.find('night.' + str(dayCount+1)) > -1):
+            if (line.find('night.' + str(dayCount+1)) > -1): # 读完一天数据结束
                 break
             if readFlag:
                 row += 1
-                textInfo += line
                 tempInfo += line
-
+                # 微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
                 if row == 25:
                     radioList.append(tempInfo)
                     tempInfo = ''
                     row = 0
-        textInfo += '\n晚安'
-        tempInfo += '\n晚安'
+        tempInfo += '\n晚安\n' + 'by：小可爱的贴心秘书' + '\n'
         radioList.append(tempInfo)
-        # common.txtToMp3(radioList)
-        # print(textInfo)
+        # common.txtToMp3(radioList) #文字生成语音 发送语音
+        print(radioList)
         return radioList
 
     def getBingPhoto(self, index):
+        # index 对应的是 必应 index天的壁纸
         url = ' http://www.bing.com/HPImageArchive.aspx?format=js&idx=' + index + '&n=1&nc=1469612460690&pid=hp&video=1'
         html = urllib.request.urlopen(url).read().decode('utf-8')
 
         photoData = json.loads(html)
+        # 这是壁纸的 url
         photoUrl = 'https://cn.bing.com' + photoData['images'][0]['url']
         photoReason = photoData['images'][0]['copyright']
         photoReason = photoReason.split(' ')[0]
         photo = urllib.request.urlopen(photoUrl).read()
 
+        # 下载壁纸刀本地
         with open('./bing.jpg', 'wb') as f:
             # img = open_url(photoUrl)
             if photo:
                 f.write(photo)
         print("图片已保存")
+
+        # 把壁纸的介绍写到壁纸上
         # 设置所使用的字体
         font = ImageFont.truetype("simhei.ttf",35)
-
-        # 打开图片
         imageFile = "./bing.jpg"
         im1 = Image.open(imageFile)
-
-        # 画图
+        # 画图，把壁纸的介绍写到壁纸上
         draw = ImageDraw.Draw(im1)
         draw.text((im1.size[0]/2.5, im1.size[1]-50), photoReason, (255, 255, 255), font=font)  # 设置文字位置/内容/颜色/字体
         draw = ImageDraw.Draw(im1)  # Just draw it!
-
         # 另存图片
         im1.save("./bing.jpg")
+
 msg_information = {}
 if __name__ == '__main__':
     dataUtil = DataUtil()
     dataUtil.getWeatherData('九江')
     # # dataUtil.getBingPhoto('2')
-    # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
     # for txt in stroy:
     #     print(txt)
     # msg_information['001'] = '001'

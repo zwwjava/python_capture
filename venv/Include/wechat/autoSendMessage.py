@@ -20,47 +20,16 @@ import _thread
 
 dataUtil = DataUtil()
 class WeChat():
-    KEY = '71f9d9d2dd364ad8b28bd56527470176'
+
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
-        # print(itchat.send_file('./Passing through your world.mp3', 'filehelper'))
+        itchat.send('hello my love', toUserName='filehelper') #发送信息给微信文件助手
+
+        friends = itchat.search_friends(name='好友昵称')  # 获取微信好友列表
+        userName = friends[0]['UserName']
+        itchat.send('hello my love', toUserName=userName)  # 发送信息给指定好友
+
         itchat.run()  # 让itchat一直运行
-
-    # 回复信息
-    # @itchat.msg_register(['Text', 'Picture'])
-    def text_reply(self, msg):
-        msgText = msg['Text']
-        if msgText == "开启":
-            OPEN_FLAG = 1
-        if msgText == "关闭":
-            OPEN_FLAG = 0
-        if OPEN_FLAG == 1:
-            # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-            # defaultReply = '不想说话了！\n来自旺旺的语音助理'
-            defaultReply = '不想说话了！' + "*"
-            # 如果图灵Key出现问题，那么reply将会是None
-            reply = get_response(msg['Text']) + "*"
-            # a or b的意思是，如果a有内容，那么返回a，否则返回b
-            # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-            return reply or defaultReply
-
-
-    def get_response(self, msg):
-        # 构造了要发送给服务器的数据
-        apiUrl = 'http://www.tuling123.com/openapi/api'
-        data = {
-            'key': KEY,
-            'info': msg,
-            'userid': 'wechat-robot',
-        }
-        try:
-            r = requests.post(apiUrl, data=data).json()
-            return r.get('text')
-        # 为了防止服务器没有正常响应导致程序异常退出，这里用try-except捕获了异常
-        # 如果服务器没能正常交互（返回非json或无法连接），那么就会进入下面的return
-        except:
-            # 将会返回一个None
-            return
 
     def getFriend(self, name):
         friends = itchat.search_friends(name = name)  # 获取微信好友列表，如果设置update=True将从服务器刷新列表
@@ -131,6 +100,7 @@ class WeChat():
     def sendMessage(self, message, name):
         itchat.send(message, toUserName=name)
 
+    # 推送睡前故事
     def readStory(self):
         print('readStory do')
         stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
@@ -147,11 +117,13 @@ class WeChat():
         # group2 = wechat.getRoom('(￣(●●)￣)')
         # wechat.sendMessage(stroy, group2)
 
+    # 推送每日早报
     def dailyInfo(self):
         print('dailyInfo do')
         jiujiang = dataUtil.getWeatherData('九江')
         # wechat.sendMessage(jiujiang, 'filehelper')
         yfei = wechat.getFriend('燚菲。')
+
         wechat.sendMessage(jiujiang, yfei)
         # group2 = wechat.getRoom('幸福一家人')
         # wechat.sendMessage(hangz, group2)
@@ -161,47 +133,44 @@ class WeChat():
 # 历史信息
 msg_information = {}
 KEY = '71f9d9d2dd364ad8b28bd56527470176'
+# 聊天助手开关
 OPEN_FLAG = 0
 # 回复信息
-# @itchat.msg_register(['Text','NOTE'])
+@itchat.msg_register(['Text'])
 def text_reply(msg):
-    userName = msg['FromUserName']
-    print(msg)
-    msg_id = msg['MsgId']   #每条信息的id
-    if len(msg_information) >= 10:
-        keys = list(msg_information.keys())
-        msg_information.pop(keys[0])
-    msg_information[msg_id] = msg['Text']
-    print(msg_information)
-    # global OPEN_FLAG
-    # msgText = msg['Text']
+    # userName = msg['User']['NickName']
+    # # print(userName)
+    # # print(msg)
+    # # msg_content = ''
+    # # if msg['Type'] == 'Text' or msg['Type'] == 'Sharing':  # 如果发送的消息是文本 # 如果消息为分享的音乐或者文章，详细的内容为文章的标题或者是分享的名字
+    # #     msg_content = msg['Text']
+    # # elif msg['Type'] == "Attachment" or msg['Type'] == "Video" or msg['Type'] == 'Picture' or msg['Type'] == 'Recording':
+    # #     msg_content = msg['FileName']  # 内容就是他们的文件名
+    #
+    # if userName == '燚菲。':
+    #     print(msg)
+    #     wechat.sendMessage(msg['Text'], 'filehelper')
+
+    global OPEN_FLAG
+    msgText = msg['Text']
     # print(msgText)
-    # if msgText == "皮皮过来":
-    #     OPEN_FLAG = 1
-    #     return '开启皮皮语音助手*'
-    # if msgText == "皮皮退下":
-    #     OPEN_FLAG = 0
-    #     return '关闭皮皮语音助手*'
-    # if OPEN_FLAG == 1:
-    #     # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
-    #     defaultReply = '不想说话了！' + "*"
-    #     # 如果图灵Key出现问题，那么reply将会是None
-    #     reply = get_response(msg['Text']) + "*"
-    #     # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
-    #     return reply or defaultReply
+    if msgText == "皮皮过来":
+        OPEN_FLAG = 1
+        print('开启皮皮语音助手*')
+        return '开启皮皮语音助手*'
+    if msgText == "皮皮退下":
+        OPEN_FLAG = 0
+        print('关闭皮皮语音助手*')
+        return '关闭皮皮语音助手*'
+    if OPEN_FLAG == 1:
+        # 为了保证在图灵Key出现问题的时候仍旧可以回复，这里设置一个默认回复
+        defaultReply = '不想说话了！' + "*"
+        # 如果图灵Key出现问题，那么reply将会是None
+        reply = get_response(msg['Text']) + "*"
+        # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
+        return reply or defaultReply
 
-
-##这个是用于监听是否有消息撤回
-# @itchat.msg_register(['NOTE'])
-def information(msg):
-    print('撤回信息：' + msg)
-    if '撤回了一条消息' in msg['Content']:
-        old_msg_id = re.search("\<msgid\>(.*?)\<\/msgid\>", msg['Content']).group(1)  # 在返回的content查找撤回的消息的id
-        old_msg = msg_information.get(old_msg_id)  # 得到消息
-        msg_body = '小可爱撤回了一条信息：' + old_msg
-        wechat.sendMessage(msg_body, 'filehelper')
-
-
+# 图灵机器人
 def get_response(msg):
     # 构造了要发送给服务器的数据
     apiUrl = 'http://www.tuling123.com/openapi/api'
@@ -220,16 +189,16 @@ def get_response(msg):
         # 将会返回一个None
         return
 
-def job1_task(wechat):
-    threading.Thread(target=wechat.login()).start()
 
-wechat = WeChat()
-# 开启多线程
+wechat = WeChat() #这里是封装的 itchat
+# 开启微信登录线程，需要单独占个线程
 _thread.start_new_thread(wechat.login, ( ))
-# 开启早间天气预报
+
+# 配置定时任务
+# 开启早间天气预报 定时任务
 schedule.every().day.at("7:20").do(wechat.dailyInfo)
-# 开启睡前故事
-schedule.every().day.at("22:00").do(wechat.readStory)
+# 开启睡前故事 定时任务
+schedule.every().day.at("21:30").do(wechat.readStory)
 while True:
     schedule.run_pending()
     time.sleep(1)
