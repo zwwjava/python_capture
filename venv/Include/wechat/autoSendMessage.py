@@ -137,15 +137,6 @@ class WeChat():
         alarms = "小可爱，快到八点了！"
         yfei = wechat.getFriend('乐多')
         wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
-        wechat.sendMessage(alarms, yfei)
 
 
 # 历史信息
@@ -203,7 +194,7 @@ _thread.start_new_thread(wechat.login, ( ))
 # 开启早间天气预报 定时任务
 schedule.every().day.at("7:20").do(wechat.dailyInfo)
 # 开启情话 定时任务
-schedule.every().day.at("7:30").do(wechat.qinghua)
+schedule.every().day.at("23:00").do(wechat.qinghua)
 # 开启睡前故事 定时任务
 schedule.every().day.at("21:30").do(wechat.readStory)
 while True:

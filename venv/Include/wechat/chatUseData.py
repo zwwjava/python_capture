@@ -75,8 +75,7 @@ class DataUtil():
 
     def getBookInfo(self, filePath):
         radioList = [] #微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
-        row = 0
-        tempInfo = textInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
+        tempInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
         readFlag = False #是否读取
         today = datetime.datetime.now()
         dayCount = (today - readBookStartDay).days + 1
@@ -87,13 +86,12 @@ class DataUtil():
             if (line.find('night.' + str(dayCount+1)) > -1): # 读完一天数据结束
                 break
             if readFlag:
-                row += 1
-                tempInfo += line
-                # 微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
-                if row == 20:
+                # 预计文本长度 微信每次最多只能发送的字符是有限制的
+                length = len(tempInfo) + len(line)
+                if length > 1500:
                     radioList.append(tempInfo)
                     tempInfo = ''
-                    row = 0
+                tempInfo += line
         tempInfo += '\n晚安\n' + 'by：小可爱的贴心秘书' + '\n'
         radioList.append(tempInfo)
         # common.txtToMp3(radioList) #文字生成语音 发送语音
@@ -101,7 +99,7 @@ class DataUtil():
         return radioList
 
     def getQinghua(self, filePath):
-        tempInfo = textInfo = '晚安：\n'
+        tempInfo = '晚安：\n'
         readFlag = False  # 是否读取
         today = datetime.datetime.now()
         dayCount = (today - qinghuaStartDay).days + 1
@@ -154,8 +152,11 @@ if __name__ == '__main__':
     dataUtil = DataUtil()
     # dataUtil.getWeatherData('九江')
     # dataUtil.getBingPhoto('3')
-    # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-    qinghua = dataUtil.getQinghua('./qinghua.txt')
+    stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    # # qinghua = dataUtil.getQinghua('./qinghua.txt')
+    # for line in open('送你一颗子弹.txt', encoding='utf-8'):
+    #     print(line)
+    #     b = line != ' \n'
     # for txt in stroy:
     #     print(txt)
     # msg_information['001'] = '001'
@@ -173,9 +174,9 @@ if __name__ == '__main__':
     # print(msg_information)
 
 
-    # with open('./2018.12.25.1.txt',encoding='utf-8',mode =  'w') as f:
-    #     for line in open('./2018.12.25.txt', encoding='utf-8'):
-    #         newLine = "20190122" + line[8:len(line)]
-    #         f.writelines(newLine)
+    with open('./送你1颗子弹.txt',encoding='utf-8',mode =  'w') as f:
+        for line in open('./送你一颗子弹.txt', encoding='utf-8'):
+            if line != ' \n':
+                f.writelines(line)
 
 
