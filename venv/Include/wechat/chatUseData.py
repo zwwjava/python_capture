@@ -13,7 +13,9 @@ common = Common() #这是个我自己封装的工具类
 key = 'cc186c9881b94b42b886a6d634c63002'
 key_jh = '777d35900bffe58af88f56069b12785c'
 # 提取故事的第一天
-readBookStartDay = datetime.datetime(2019, 2, 17)
+readBookStartDay = datetime.datetime(2019, 2, 19)
+# 提取情话的第一天
+qinghuaStartDay = datetime.datetime(2019, 3, 19)
 class DataUtil():
 
     # 获取天气信息
@@ -48,7 +50,7 @@ class DataUtil():
         textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1] + '\n\n'
         textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]  + '\n\n'
         textInfo = textInfo + '紫外线指数：' + jsonData['result']['life']['info']['ziwaixian'][0] + ' - ' + jsonData['result']['life']['info']['ziwaixian'][1]  + '\n\n'
-        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n\n'
+        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n'
         return textInfo
 
     def parseInfo_jh(self, jsons):
@@ -88,7 +90,7 @@ class DataUtil():
                 row += 1
                 tempInfo += line
                 # 微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
-                if row == 25:
+                if row == 20:
                     radioList.append(tempInfo)
                     tempInfo = ''
                     row = 0
@@ -97,6 +99,24 @@ class DataUtil():
         # common.txtToMp3(radioList) #文字生成语音 发送语音
         print(radioList)
         return radioList
+
+    def getQinghua(self, filePath):
+        tempInfo = textInfo = '晚安：\n'
+        readFlag = False  # 是否读取
+        today = datetime.datetime.now()
+        dayCount = (today - qinghuaStartDay).days + 1
+        for line in open(filePath, encoding='utf-8'):
+            if (line.find('night.' + str(dayCount)) > -1): # 开始读数据
+                readFlag = True
+                continue
+            if (line.find('night.' + str(dayCount+1)) > -1): # 读完一天数据结束
+                break
+            if readFlag:
+                tempInfo += line
+
+        print(tempInfo)
+        return tempInfo
+
 
     def getBingPhoto(self, index):
         # index 对应的是 必应 index天的壁纸
@@ -132,9 +152,10 @@ class DataUtil():
 msg_information = {}
 if __name__ == '__main__':
     dataUtil = DataUtil()
-    dataUtil.getWeatherData('九江')
-    # # dataUtil.getBingPhoto('2')
-    stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    # dataUtil.getWeatherData('九江')
+    # dataUtil.getBingPhoto('3')
+    # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+    qinghua = dataUtil.getQinghua('./qinghua.txt')
     # for txt in stroy:
     #     print(txt)
     # msg_information['001'] = '001'

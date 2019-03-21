@@ -23,12 +23,6 @@ class WeChat():
 
     def login(self):
         itchat.auto_login(hotReload=True)  # 登录，会下载二维码给手机扫描登录，hotReload设置为True表示以后自动登录
-        itchat.send('hello my love', toUserName='filehelper') #发送信息给微信文件助手
-
-        friends = itchat.search_friends(name='好友昵称')  # 获取微信好友列表
-        userName = friends[0]['UserName']
-        itchat.send('hello my love', toUserName=userName)  # 发送信息给指定好友
-
         itchat.run()  # 让itchat一直运行
 
     def getFriend(self, name):
@@ -107,7 +101,7 @@ class WeChat():
         dataUtil.getBingPhoto('0')
         # wechat.sendMessage(stroy, 'filehelper')
         # itchat.send_image('./bing.jpg',  'filehelper')
-        yfei = wechat.getFriend('燚菲。')
+        yfei = wechat.getFriend('乐多')
 
         for txt in stroy:
             wechat.sendMessage(txt, yfei)
@@ -122,7 +116,7 @@ class WeChat():
         print('dailyInfo do')
         jiujiang = dataUtil.getWeatherData('九江')
         # wechat.sendMessage(jiujiang, 'filehelper')
-        yfei = wechat.getFriend('燚菲。')
+        yfei = wechat.getFriend('乐多')
 
         wechat.sendMessage(jiujiang, yfei)
         # group2 = wechat.getRoom('幸福一家人')
@@ -130,27 +124,37 @@ class WeChat():
         # group1 = wechat.getRoom('阿里A3研发部')
         # wechat.sendMessage(hangz, group1)
 
+    # qinghua
+    def qinghua(self):
+        print('qinghua do')
+        qinghua = dataUtil.getQinghua('./qinghua.txt')
+        yfei = wechat.getFriend('乐多')
+        wechat.sendMessage(qinghua, yfei)
+
+    # 闹钟
+    def alarm(self):
+        print('alarm do')
+        alarms = "小可爱，快到八点了！"
+        yfei = wechat.getFriend('乐多')
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+        wechat.sendMessage(alarms, yfei)
+
+
 # 历史信息
-msg_information = {}
 KEY = '71f9d9d2dd364ad8b28bd56527470176'
 # 聊天助手开关
 OPEN_FLAG = 0
 # 回复信息
-@itchat.msg_register(['Text'])
+# @itchat.msg_register(['Text'])
 def text_reply(msg):
-    # userName = msg['User']['NickName']
-    # # print(userName)
-    # # print(msg)
-    # # msg_content = ''
-    # # if msg['Type'] == 'Text' or msg['Type'] == 'Sharing':  # 如果发送的消息是文本 # 如果消息为分享的音乐或者文章，详细的内容为文章的标题或者是分享的名字
-    # #     msg_content = msg['Text']
-    # # elif msg['Type'] == "Attachment" or msg['Type'] == "Video" or msg['Type'] == 'Picture' or msg['Type'] == 'Recording':
-    # #     msg_content = msg['FileName']  # 内容就是他们的文件名
-    #
-    # if userName == '燚菲。':
-    #     print(msg)
-    #     wechat.sendMessage(msg['Text'], 'filehelper')
-
     global OPEN_FLAG
     msgText = msg['Text']
     # print(msgText)
@@ -170,6 +174,7 @@ def text_reply(msg):
         # 有内容一般就是指非空或者非None，你可以用`if a: print('True')`来测试
         return reply or defaultReply
 
+KEY = '71f9d9d2dd364ad8b28bd56527470176'
 # 图灵机器人
 def get_response(msg):
     # 构造了要发送给服务器的数据
@@ -197,6 +202,8 @@ _thread.start_new_thread(wechat.login, ( ))
 # 配置定时任务
 # 开启早间天气预报 定时任务
 schedule.every().day.at("7:20").do(wechat.dailyInfo)
+# 开启情话 定时任务
+schedule.every().day.at("7:30").do(wechat.qinghua)
 # 开启睡前故事 定时任务
 schedule.every().day.at("21:30").do(wechat.readStory)
 while True:
