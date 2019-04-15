@@ -9,17 +9,26 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 
+import pickle
+
+
 common = Common() #这是个我自己封装的工具类
 key = 'cc186c9881b94b42b886a6d634c63002'
 key_jh = '777d35900bffe58af88f56069b12785c'
 # 提取故事的第一天
-readBookStartDay = datetime.datetime(2019, 2, 19)
+readBookStartDay = datetime.datetime(2019, 3, 30)
 # 提取情话的第一天
 qinghuaStartDay = datetime.datetime(2019, 3, 19)
+# 天气计算开始时间
+weatherStartDay = datetime.datetime(2019, 4, 14)
+cityList = [ '九江', '九江', '九江','九江', '九江', '九江', '九江','九江', '九江', '九江', '九江', '九江','九江', '九江', '九江', '九江','九江', '九江', '九江'];
 class DataUtil():
 
     # 获取天气信息
     def getWeatherData(self, cityname):
+        today = datetime.datetime.now()
+        dayCount = (today - weatherStartDay).days
+        # cityname = cityList[dayCount]
         # 阿凡达数据
         url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + cityname
         # 聚合数据
@@ -73,13 +82,14 @@ class DataUtil():
         textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n'
         return textInfo
 
+    # 睡前故事
     def getBookInfo(self, filePath):
         radioList = [] #微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
-        tempInfo = '睡前故事：张嘉佳 - 《从你的全世界路过》.\n\n'
+        tempInfo = '睡前故事：刘瑜 - 《送你一颗子弹》.\n\n'
         readFlag = False #是否读取
         today = datetime.datetime.now()
         dayCount = (today - readBookStartDay).days + 1
-        for line in open(filePath):
+        for line in open(filePath, encoding='utf-8'):
             if (line.find('night.' + str(dayCount)) > -1): # 开始读数据
                 readFlag = True
                 continue
@@ -98,6 +108,25 @@ class DataUtil():
         print(radioList)
         return radioList
 
+    # 每日一句
+    def getDaily(self):
+        nowDay = datetime.datetime.now().strftime('%Y-%m-%d');
+        tempInfo = '早安：\n'
+        url = "http://open.iciba.com/dsapi/"   # 官方提供的API
+        results = common.get(url)
+        resultsData = json.loads(results)
+        content = resultsData['content']
+        note = resultsData['note']
+        translation = resultsData['translation']
+        translation = translation.replace("小编的话", "多说一句")
+        tempInfo += content + '\n'
+        tempInfo += note + '\n\n'
+        tempInfo += translation + '\n'
+        tempInfo += '\n爱你！\n'
+        print(tempInfo)
+        return tempInfo
+
+    # 每日情话
     def getQinghua(self, filePath):
         tempInfo = '晚安：\n'
         readFlag = False  # 是否读取
@@ -112,10 +141,11 @@ class DataUtil():
             if readFlag:
                 tempInfo += line
 
+        tempInfo += '\n爱你！\n'
         print(tempInfo)
         return tempInfo
 
-
+    # 每日美图
     def getBingPhoto(self, index):
         # index 对应的是 必应 index天的壁纸
         url = ' http://www.bing.com/HPImageArchive.aspx?format=js&idx=' + index + '&n=1&nc=1469612460690&pid=hp&video=1'
@@ -149,11 +179,13 @@ class DataUtil():
 
 msg_information = {}
 if __name__ == '__main__':
+
     dataUtil = DataUtil()
-    # dataUtil.getWeatherData('九江')
+    dataUtil.getDaily()
     # dataUtil.getBingPhoto('3')
-    stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-    # # qinghua = dataUtil.getQinghua('./qinghua.txt')
+    # stroy = dataUtil.getBookInfo('./送你一颗子弹.txt')
+
+    # qinghua = dataUtil.getQinghua('./qinghua.txt')
     # for line in open('送你一颗子弹.txt', encoding='utf-8'):
     #     print(line)
     #     b = line != ' \n'
@@ -174,9 +206,9 @@ if __name__ == '__main__':
     # print(msg_information)
 
 
-    with open('./送你1颗子弹.txt',encoding='utf-8',mode =  'w') as f:
-        for line in open('./送你一颗子弹.txt', encoding='utf-8'):
-            if line != ' \n':
-                f.writelines(line)
+    # with open('./送你1颗子弹.txt',encoding='utf-8',mode =  'w') as f:
+    #     for line in open('./送你一颗子弹.txt', encoding='utf-8'):
+    #         if line != ' \n':
+    #             f.writelines(line)
 
 

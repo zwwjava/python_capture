@@ -97,17 +97,19 @@ class WeChat():
     # 推送睡前故事
     def readStory(self):
         print('readStory do')
-        stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+        # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
+        stroy = dataUtil.getBookInfo('./送你一颗子弹.txt')
         dataUtil.getBingPhoto('0')
-        # wechat.sendMessage(stroy, 'filehelper')
-        # itchat.send_image('./bing.jpg',  'filehelper')
         yfei = wechat.getFriend('乐多')
 
         for txt in stroy:
             wechat.sendMessage(txt, yfei)
+            # wechat.sendMessage(txt, 'filehelper')
+
+        itchat.send_image('./bing.jpg', toUserName=yfei)
+        # itchat.send_image('./bing.jpg', 'filehelper')
 
         # itchat.send_file('./Passing through your world.mp3', toUserName=yfei)
-        itchat.send_image('./bing.jpg', toUserName=yfei)
         # group2 = wechat.getRoom('(￣(●●)￣)')
         # wechat.sendMessage(stroy, group2)
 
@@ -117,7 +119,6 @@ class WeChat():
         jiujiang = dataUtil.getWeatherData('九江')
         # wechat.sendMessage(jiujiang, 'filehelper')
         yfei = wechat.getFriend('乐多')
-
         wechat.sendMessage(jiujiang, yfei)
         # group2 = wechat.getRoom('幸福一家人')
         # wechat.sendMessage(hangz, group2)
@@ -127,9 +128,9 @@ class WeChat():
     # qinghua
     def qinghua(self):
         print('qinghua do')
-        qinghua = dataUtil.getQinghua('./qinghua.txt')
+        dailyMessage = dataUtil.getDaily()
         yfei = wechat.getFriend('乐多')
-        wechat.sendMessage(qinghua, yfei)
+        wechat.sendMessage(dailyMessage, yfei)
 
     # 闹钟
     def alarm(self):
@@ -192,9 +193,9 @@ _thread.start_new_thread(wechat.login, ( ))
 
 # 配置定时任务
 # 开启早间天气预报 定时任务
-schedule.every().day.at("7:20").do(wechat.dailyInfo)
-# 开启情话 定时任务
-schedule.every().day.at("23:00").do(wechat.qinghua)
+schedule.every().day.at("7:00").do(wechat.dailyInfo)
+# 开启每日一句 定时任务
+schedule.every().day.at("20:00").do(wechat.qinghua)
 # 开启睡前故事 定时任务
 schedule.every().day.at("21:30").do(wechat.readStory)
 while True:
