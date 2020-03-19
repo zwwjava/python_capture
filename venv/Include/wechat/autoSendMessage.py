@@ -30,7 +30,7 @@ class WeChat():
         userName = friends[0]['UserName']
         return userName
 
-    def getFriends(self):
+    def getFriends(self): 
         friends = itchat.get_friends(update=True)[0:]
         return friends
 
@@ -69,7 +69,10 @@ class WeChat():
     def signature(self, friends):
         tList = []
         for i in friends:
+            nickName = i["NickName"]
+            remarkName = i["RemarkName"]
             signature = i["Signature"].replace(" ", "").replace("span", "").replace("class", "").replace("emoji", "")
+            print("昵称：" + nickName + " ；备注名：" + remarkName + " ；签名：" + signature)
             rep = re.compile("1f\d.+")
             signature = rep.sub("", signature)
             tList.append(signature)
@@ -98,7 +101,10 @@ class WeChat():
     def readStory(self):
         print('readStory do')
         # stroy = dataUtil.getBookInfo('./从你的全世界路过.txt')
-        stroy = dataUtil.getBookInfo('./送你一颗子弹.txt')
+        # stroy = dataUtil.getBookInfo('./送你一颗子弹.txt')
+        # stroy = dataUtil.getBookInfo('./人间草木.txt')
+        # stroy = dataUtil.getBookInfo('./一只特立独行的猪.txt')
+        stroy = dataUtil.getBookInfo('./生活，是很好玩的.txt')
         dataUtil.getBingPhoto('0')
         yfei = wechat.getFriend('乐多')
 
@@ -116,7 +122,8 @@ class WeChat():
     # 推送每日早报
     def dailyInfo(self):
         print('dailyInfo do')
-        jiujiang = dataUtil.getWeatherData('九江')
+        jiujiang = dataUtil.getWeatherData('都昌')
+        # hangzhou = dataUtil.getWeatherData('杭州')
         # wechat.sendMessage(jiujiang, 'filehelper')
         yfei = wechat.getFriend('乐多')
         wechat.sendMessage(jiujiang, yfei)
@@ -125,6 +132,14 @@ class WeChat():
         # group1 = wechat.getRoom('阿里A3研发部')
         # wechat.sendMessage(hangz, group1)
 
+    # 提示
+    def test(self):
+        yfei = wechat.getFriend('乐多')
+        wechat.sendMessage('记得拿外套，记得拿外套', yfei)
+        wechat.sendMessage('记得拿外套，记得拿外套', yfei)
+        wechat.sendMessage('记得拿外套，记得拿外套', yfei)
+        wechat.sendMessage('记得拿外套，记得拿外套', yfei)
+        wechat.sendMessage('记得拿外套，记得拿外套', yfei)
     # qinghua
     def qinghua(self):
         print('qinghua do')
@@ -190,23 +205,24 @@ def get_response(msg):
 wechat = WeChat() #这里是封装的 itchat
 # 开启微信登录线程，需要单独占个线程
 _thread.start_new_thread(wechat.login, ( ))
-
+ 
 # 配置定时任务
 # 开启早间天气预报 定时任务
-schedule.every().day.at("7:00").do(wechat.dailyInfo)
+schedule.every().day.at("8:00").do(wechat.dailyInfo)
 # 开启每日一句 定时任务
-schedule.every().day.at("20:00").do(wechat.qinghua)
+schedule.every().day.at("19:30").do(wechat.qinghua)
 # 开启睡前故事 定时任务
-schedule.every().day.at("21:30").do(wechat.readStory)
+schedule.every().day.at("20:00").do(wechat.readStory)
 while True:
     schedule.run_pending()
     time.sleep(1)
 
 # if __name__ == "__main__":
 #     wechat = WeChat()
-#     wechat.login();
-#     group = wechat.getRooms()
-#     print("")
+#     # wechat.login();
+#     itchat.auto_login()
+# #     group = wechat.getRooms()
+# #     print("")
 #     friends = wechat.getFriends()
 #     wechat.signature(friends)
 #     wechat.ratio(friends)

@@ -16,12 +16,12 @@ common = Common() #这是个我自己封装的工具类
 key = 'cc186c9881b94b42b886a6d634c63002'
 key_jh = '777d35900bffe58af88f56069b12785c'
 # 提取故事的第一天
-readBookStartDay = datetime.datetime(2019, 3, 30)
+readBookStartDay = datetime.datetime(2020, 2, 4)
 # 提取情话的第一天
 qinghuaStartDay = datetime.datetime(2019, 3, 19)
 # 天气计算开始时间
-weatherStartDay = datetime.datetime(2019, 4, 14)
-cityList = [ '九江', '九江', '九江','九江', '九江', '九江', '九江','九江', '九江', '九江', '九江', '九江','九江', '九江', '九江', '九江','九江', '九江', '九江'];
+weatherStartDay = datetime.datetime(2019, 4, 30)
+cityList = [ '九江&杭州', '九江&杭州', '九江&杭州','九江&杭州', '九江&杭州', '九江&杭州', '九江','九江', '九江', '九江', '九江', '九江','九江', '九江', '九江', '九江','九江', '九江', '九江'];
 class DataUtil():
 
     # 获取天气信息
@@ -29,14 +29,17 @@ class DataUtil():
         today = datetime.datetime.now()
         dayCount = (today - weatherStartDay).days
         # cityname = cityList[dayCount]
-        # 阿凡达数据
-        url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + cityname
-        # 聚合数据
-        url_jh = 'http://v.juhe.cn/weather/index?key=' + key_jh + '&cityname=' + cityname
-        results = common.get(url)
-        text = self.parseInfo_afd(results)
-        print(text)
-        return text
+        textContent = ''
+        citys = cityname.split('&')
+        for city in citys:
+            # 阿凡达数据
+            url = ' http://api.avatardata.cn/Weather/Query?key=' + key + '&cityname=' + city
+            # 聚合数据
+            url_jh = 'http://v.juhe.cn/weather/index?key=' + key_jh + '&cityname=' + city
+            results = common.get(url)
+            textContent += self.parseInfo_afd(results)
+        print(textContent)
+        return textContent
 
     # 简单的数据封装
     def parseInfo_afd(self, jsons):
@@ -59,7 +62,7 @@ class DataUtil():
         textInfo = textInfo + '运动指数：' + jsonData['result']['life']['info']['yundong'][0] + ' - ' + jsonData['result']['life']['info']['yundong'][1] + '\n\n'
         textInfo = textInfo + '感冒指数：' + jsonData['result']['life']['info']['ganmao'][0] + ' - ' + jsonData['result']['life']['info']['ganmao'][1]  + '\n\n'
         textInfo = textInfo + '紫外线指数：' + jsonData['result']['life']['info']['ziwaixian'][0] + ' - ' + jsonData['result']['life']['info']['ziwaixian'][1]  + '\n\n'
-        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n'
+        textInfo = textInfo + 'by：小可爱的贴心秘书' + '\n\n'
         return textInfo
 
     def parseInfo_jh(self, jsons):
@@ -85,7 +88,7 @@ class DataUtil():
     # 睡前故事
     def getBookInfo(self, filePath):
         radioList = [] #微信每次最多只能发送的字符是有限制的，我每25行发送一次信息
-        tempInfo = '睡前故事：刘瑜 - 《送你一颗子弹》.\n\n'
+        tempInfo = '睡前故事：汪曾祺 - 《生活，是很好玩的》.\n\n'
         readFlag = False #是否读取
         today = datetime.datetime.now()
         dayCount = (today - readBookStartDay).days + 1
@@ -98,11 +101,11 @@ class DataUtil():
             if readFlag:
                 # 预计文本长度 微信每次最多只能发送的字符是有限制的
                 length = len(tempInfo) + len(line)
-                if length > 1500:
+                if length > 1200:
                     radioList.append(tempInfo)
                     tempInfo = ''
                 tempInfo += line
-        tempInfo += '\n晚安\n' + 'by：小可爱的贴心秘书' + '\n'
+        tempInfo += '\n\n晚安\n' + 'by：小可爱的贴心秘书' + '\n'
         radioList.append(tempInfo)
         # common.txtToMp3(radioList) #文字生成语音 发送语音
         print(radioList)
@@ -111,17 +114,17 @@ class DataUtil():
     # 每日一句
     def getDaily(self):
         nowDay = datetime.datetime.now().strftime('%Y-%m-%d');
-        tempInfo = '早安：\n'
+        tempInfo = '晚上好鸭：\n'
         url = "http://open.iciba.com/dsapi/"   # 官方提供的API
         results = common.get(url)
         resultsData = json.loads(results)
         content = resultsData['content']
         note = resultsData['note']
         translation = resultsData['translation']
-        translation = translation.replace("小编的话", "多说一句")
+        translation = translation.replace("小编的话", "我想说")
         tempInfo += content + '\n'
         tempInfo += note + '\n\n'
-        tempInfo += translation + '\n'
+        # tempInfo += translation + '\n'
         tempInfo += '\n爱你！\n'
         print(tempInfo)
         return tempInfo
@@ -182,13 +185,28 @@ if __name__ == '__main__':
 
     dataUtil = DataUtil()
     dataUtil.getDaily()
-    # dataUtil.getBingPhoto('3')
-    # stroy = dataUtil.getBookInfo('./送你一颗子弹.txt')
+    # print(dataUtil.getWeatherData(''))
+    # dataUtil.getBingPhoto('0')
+    stroy = dataUtil.getBookInfo('./生活，是很好玩的.txt')
 
     # qinghua = dataUtil.getQinghua('./qinghua.txt')
-    # for line in open('送你一颗子弹.txt', encoding='utf-8'):
-    #     print(line)
-    #     b = line != ' \n'
+
+
+
+    # size = 0
+    # for line in open('间客.txt', encoding='utf-8'):
+    #     if len(line) > 120:
+    #         print("                     " + line[0:120])
+    #         print("                     " + line[120:len(line)], end="")
+    #     else:
+    #         print("                     " + line, end="")
+    #     size = size + 1
+    #     if size > 1500 : break
+
+
+
+
+        # b = line != ' \n'
     # for txt in stroy:
     #     print(txt)
     # msg_information['001'] = '001'
@@ -205,10 +223,25 @@ if __name__ == '__main__':
     # msg_information['001'] = '001'
     # print(msg_information)
 
-
-    # with open('./送你1颗子弹.txt',encoding='utf-8',mode =  'w') as f:
-    #     for line in open('./送你一颗子弹.txt', encoding='utf-8'):
-    #         if line != ' \n':
+    # lineIndex = 0
+    #
+    # with open('./生活，是很好玩的.txt',encoding='utf-8',mode =  'w') as f:
+    #     for line in open('./一只特立独行的猪1.txt', encoding='utf-8'):
+    #         if line != '\n':
     #             f.writelines(line)
+
+
+            # f.writelines(line)
+            # if lineIndex%11 == 0:
+            #     f.writelines("night." + str(nightIndex) + "\n")
+            #     nightIndex = nightIndex + 1
+            # if line.startswith(' '):
+            #     print(line)
+            #     f.writelines(line)
+            # else:
+            #     print(line)
+            #     lineIndex = lineIndex + 1
+            #     f.writelines("night." + str(lineIndex) + "\n")
+            #     f.writelines(line)
 
 
