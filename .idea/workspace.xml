@@ -38,11 +38,6 @@
       </list>
     </option>
   </component>
-  <component name="FindInProjectRecents">
-    <findStrings>
-      <find>double_uuid</find>
-    </findStrings>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
@@ -163,7 +158,14 @@
       <option name="project" value="LOCAL" />
       <updated>1597049164047</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="fix">
+      <created>1597051536429</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1597051536429</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -201,22 +203,22 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="740" y="274" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1596770473697" />
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom" timestamp="1597050282149">
+    <state width="1899" height="196" key="GridCell.Tab.0.bottom" timestamp="1597125329219">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1597050282149" />
-    <state width="1899" height="348" key="GridCell.Tab.0.center" timestamp="1597050282149">
+    <state width="1899" height="196" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1597125329219" />
+    <state width="1899" height="196" key="GridCell.Tab.0.center" timestamp="1597125329219">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1597050282149" />
-    <state width="1899" height="348" key="GridCell.Tab.0.left" timestamp="1597050282148">
+    <state width="1899" height="196" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1597125329218" />
+    <state width="1899" height="196" key="GridCell.Tab.0.left" timestamp="1597125329218">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1597050282148" />
-    <state width="1899" height="348" key="GridCell.Tab.0.right" timestamp="1597050282149">
+    <state width="1899" height="196" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1597125329218" />
+    <state width="1899" height="196" key="GridCell.Tab.0.right" timestamp="1597125329219">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state width="1899" height="348" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1597050282149" />
+    <state width="1899" height="196" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1597125329219" />
     <state width="1899" height="348" key="GridCell.Tab.1.bottom" timestamp="1597050282149">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -237,10 +239,10 @@
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="908" y="248" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1596779749462" />
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1596793917746">
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2" timestamp="1597051545942">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1596793917746" />
+    <state x="552" y="253" key="Vcs.Push.Dialog.v2/0.0.1920.1040@0.0.1920.1040" timestamp="1597051545942" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

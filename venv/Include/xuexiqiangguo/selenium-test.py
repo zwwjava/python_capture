@@ -2,32 +2,51 @@ from selenium import webdriver
 from selenium.webdriver import ChromeOptions
 from time import sleep
 
+scrolljsone = "var q=document.documentElement.scrollTop=500"
+scrolljstwo = "var q=document.documentElement.scrollTop=1500"
+scrolljs = "var q=document.documentElement.scrollTop=10000"
+
 class XueXiUtils():
 
-    #打开文章阅读
+    def scrollDow(self, driver):
+        # 将滚动条移动到页面的底部
+        driver.execute_script(scrolljsone)
+        sleep(5)
+        driver.execute_script(scrolljstwo)
+        sleep(5)
+        driver.execute_script(scrolljs)
+
+        #打开文章阅读
     def xuexiwenzhang(self, driver):
         driver.get('https://www.xuexi.cn/')
-        sleep(2)
+        sleep(3)
         zhongyaoLink = driver.find_elements_by_class_name("_3wnLIRcEni99IWb4rSpguK")
-        zhongyaoLink[0].click()
-        sleep(121)
-        zhongyaoLink[1].click()
-        sleep(122)
-        zhongyaoLink[2].click()
-        sleep(123)
-        zhongyaoLink[3].click()
-        sleep(124)
-        zhongyaoLink[4].click()
-        sleep(125)
-        zhongyaoLink[5].click()
-        sleep(126)
+        self.clickLink(zhongyaoLink[0], driver, 12)
+        self.clickLink(zhongyaoLink[1], driver, 12)
+        self.clickLink(zhongyaoLink[2], driver, 12)
+        self.clickLink(zhongyaoLink[3], driver, 12)
+        self.clickLink(zhongyaoLink[4], driver, 12)
+        self.clickLink(zhongyaoLink[5], driver, 12)
+        self.clickLink(zhongyaoLink[6], driver, 126)
 
+    def clickLink(self, wenzhang, driver, timeout):
+        print('打开一个tab页---------------')
+        wenzhang.click()
+        sleep(3)
+        # 获取所有窗口句柄
+        all_h = driver.window_handles
+        # 切换最后窗口句柄
+        driver.switch_to.window(all_h[1])
+        self.scrollDow(driver)
+        sleep(timeout)
+        driver.close()
+        # 切换第一个窗口句柄
+        driver.switch_to.window(all_h[0])
 
     #打开文章阅读
     def clostTab(self, driver):
         # 获取所有窗口句柄
         all_h = driver.window_handles
-        print(all_h)
         # 切换最后窗口句柄
         driver.switch_to.window(all_h[1])
         driver.close()
@@ -44,41 +63,29 @@ class XueXiUtils():
         # 切换第一个窗口句柄
         driver.switch_to.window(all_h[0])
 
+    # 打开文章阅读
+    def clostLastTab(self, driver):
+        # 获取所有窗口句柄
+        all_h = driver.window_handles
+        # 切换最后窗口句柄
+        driver.switch_to.window(all_h[1])
+        driver.close()
+        # 切换第一个窗口句柄
+        driver.switch_to.window(all_h[0])
 
     #打开视频阅读
     def xuexishipin(self, driver):
         driver.get('https://www.xuexi.cn/4426aa87b0b64ac671c96379a3a8bd26/db086044562a57b441c24f2af1c8e101.html#1novbsbi47k-5')
-        sleep(2)
+        sleep(3)
         zhongyaoLink = driver.find_elements_by_css_selector('.Iuu474S1L6y5p7yalKQbW.grid-cell')
-        zhongyaoLink[0].click()
-        sleep(181)
-        zhongyaoLink[1].click()
-        sleep(182)
-        zhongyaoLink[2].click()
-        sleep(183)
-        zhongyaoLink[3].click()
-        sleep(184)
-        zhongyaoLink[4].click()
-        sleep(185)
-        zhongyaoLink[5].click()
-        sleep(186)
+        self.clickLink(zhongyaoLink[0], driver, 181)
+        self.clickLink(zhongyaoLink[1], driver, 182)
+        self.clickLink(zhongyaoLink[2], driver, 183)
+        self.clickLink(zhongyaoLink[3], driver, 184)
+        self.clickLink(zhongyaoLink[4], driver, 185)
+        self.clickLink(zhongyaoLink[5], driver, 186)
+        self.clickLink(zhongyaoLink[6], driver, 186)
 
-    def xuexishipinT(self, driver):
-        driver.get('https://www.xuexi.cn/4426aa87b0b64ac671c96379a3a8bd26/db086044562a57b441c24f2af1c8e101.html#1novbsbi47k-5')
-        sleep(2)
-        zhongyaoLink = driver.find_elements_by_css_selector('.Iuu474S1L6y5p7yalKQbW.grid-cell')
-        zhongyaoLink[0].click()
-        sleep(181)
-        zhongyaoLink[1].click()
-        sleep(182)
-        zhongyaoLink[2].click()
-        sleep(183)
-        zhongyaoLink[3].click()
-        sleep(184)
-        zhongyaoLink[4].click()
-        sleep(185)
-        zhongyaoLink[5].click()
-        sleep(186)
 
 
 if __name__ == '__main__':
@@ -89,10 +96,10 @@ if __name__ == '__main__':
     driver = webdriver.Chrome(r'D:\SoftWare\Python\chromedriver.exe', 0, option)
     #首页登录
     driver.get('https://pc.xuexi.cn/points/my-study.html')
-    sleep(36000)
-    while true:
+    sleep(20)
+    while True:
         dataUtil.xuexiwenzhang(driver)
-        dataUtil.clostTab(driver)
+        # dataUtil.clostTab(driver)
         dataUtil.xuexishipin(driver)
-        dataUtil.clostTab(driver)
+        # dataUtil.clostTab(driver)
         sleep(86400)
