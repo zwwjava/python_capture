@@ -17,17 +17,17 @@ class XueXiUtils():
         driver.execute_script(scrolljs)
 
         #打开文章阅读
-    def xuexiwenzhang(self, driver):
+    def xuexiwenzhang(self, driver, index):
         driver.get('https://www.xuexi.cn/')
-        sleep(3)
+        sleep(4)
         zhongyaoLink = driver.find_elements_by_class_name("_3wnLIRcEni99IWb4rSpguK")
-        self.clickLink(zhongyaoLink[0], driver, 12)
-        self.clickLink(zhongyaoLink[1], driver, 12)
-        self.clickLink(zhongyaoLink[2], driver, 12)
-        self.clickLink(zhongyaoLink[3], driver, 12)
-        self.clickLink(zhongyaoLink[4], driver, 12)
-        self.clickLink(zhongyaoLink[5], driver, 12)
-        self.clickLink(zhongyaoLink[6], driver, 126)
+        self.clickLink(zhongyaoLink[index+0], driver, 60)
+        self.clickLink(zhongyaoLink[index+1], driver, 60)
+        self.clickLink(zhongyaoLink[index+2], driver, 60)
+        self.clickLink(zhongyaoLink[index+3], driver, 60)
+        self.clickLink(zhongyaoLink[index+4], driver, 60)
+        self.clickLink(zhongyaoLink[index+5], driver, 60)
+        self.clickLink(zhongyaoLink[index+6], driver, 60)
 
     def clickLink(self, wenzhang, driver, timeout):
         print('打开一个tab页---------------')
@@ -74,17 +74,17 @@ class XueXiUtils():
         driver.switch_to.window(all_h[0])
 
     #打开视频阅读
-    def xuexishipin(self, driver):
+    def xuexishipin(self, driver, index):
         driver.get('https://www.xuexi.cn/4426aa87b0b64ac671c96379a3a8bd26/db086044562a57b441c24f2af1c8e101.html#1novbsbi47k-5')
-        sleep(3)
+        sleep(5)
         zhongyaoLink = driver.find_elements_by_css_selector('.Iuu474S1L6y5p7yalKQbW.grid-cell')
-        self.clickLink(zhongyaoLink[0], driver, 181)
-        self.clickLink(zhongyaoLink[1], driver, 182)
-        self.clickLink(zhongyaoLink[2], driver, 183)
-        self.clickLink(zhongyaoLink[3], driver, 184)
-        self.clickLink(zhongyaoLink[4], driver, 185)
-        self.clickLink(zhongyaoLink[5], driver, 186)
-        self.clickLink(zhongyaoLink[6], driver, 186)
+        self.clickLink(zhongyaoLink[index+0], driver, 180)
+        self.clickLink(zhongyaoLink[index+1], driver, 180)
+        self.clickLink(zhongyaoLink[index+2], driver, 180)
+        self.clickLink(zhongyaoLink[index+3], driver, 180)
+        self.clickLink(zhongyaoLink[index+4], driver, 180)
+        self.clickLink(zhongyaoLink[index+5], driver, 180)
+        self.clickLink(zhongyaoLink[index+6], driver, 180)
 
 
 
@@ -96,10 +96,12 @@ if __name__ == '__main__':
     driver = webdriver.Chrome(r'D:\SoftWare\Python\chromedriver.exe', 0, option)
     #首页登录
     driver.get('https://pc.xuexi.cn/points/my-study.html')
-    sleep(20)
+    sleep(60)
+    index = 7
     while True:
-        dataUtil.xuexiwenzhang(driver)
+        dataUtil.xuexiwenzhang(driver, index)
         # dataUtil.clostTab(driver)
-        dataUtil.xuexishipin(driver)
+        dataUtil.xuexishipin(driver, index)
         # dataUtil.clostTab(driver)
+        index = index + 7
         sleep(86400)
