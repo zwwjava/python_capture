@@ -1,0 +1,38 @@
+# Eclipse
+.classpath
+.project
+.settings/
+.metadata/
+/target/
+/.settings/
+.factorypath
+.project
+
+# Intellij
+.idea/
+*.iml
+*.iws
+# Mac
+.DS_Store
+
+# Maven
+log/
+target/
+out/
+
+# Others
+bin/
+.myeclipse
+.hprof
+*/.mymetadata
+
+logs
+logs/*
+*/*.log
+*/*.log.*
+*.log
+*.log.*
+*.exe.*
+*.exe
+1259000028415459329.png
+1273496635458519042.png
